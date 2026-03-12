@@ -234,31 +234,34 @@ const loves = [
   },
 ]
 
-function playDramaticChord() {
+function playTacoBellBong() {
   const ctx = new (window.AudioContext || window.webkitAudioContext)()
-  const notes = [130.81, 164.81, 196.00, 261.63, 329.63]
-  notes.forEach((freq, i) => {
+  const notes = [
+    { freq: 587, start: 0, dur: 0.2 },
+    { freq: 440, start: 0.22, dur: 0.2 },
+    { freq: 587, start: 0.44, dur: 0.4 },
+  ]
+  notes.forEach(({ freq, start, dur }) => {
     const osc = ctx.createOscillator()
     const gain = ctx.createGain()
-    osc.type = i === 0 ? 'sawtooth' : 'triangle'
+    osc.type = 'sine'
     osc.frequency.value = freq
-    gain.gain.setValueAtTime(0, ctx.currentTime)
-    gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05)
-    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5)
+    gain.gain.setValueAtTime(0, ctx.currentTime + start)
+    gain.gain.linearRampToValueAtTime(0.35, ctx.currentTime + start + 0.01)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + start + dur + 0.3)
     osc.connect(gain)
     gain.connect(ctx.destination)
-    osc.start(ctx.currentTime + i * 0.06)
-    osc.stop(ctx.currentTime + 2.5)
+    osc.start(ctx.currentTime + start)
+    osc.stop(ctx.currentTime + start + dur + 0.3)
   })
 }
 
 const TB_EMOJIS = ['🌮', '🌯', '🍟', '🥤', '🔔', '🌮', '🌯']
 const TB_ORDER = [
   '🌮 Crunchwrap Supreme',
+  '🍟 Fiesta Potatoes',
   '🥤 Baja Blast (large, obviously)',
-  '🌯 Cheesy Gordita Crunch',
-  '🍟 Nacho Fries',
-  '🔥 Fire sauce. All of it.',
+  '🔥 Hot Sauce. All of it.',
   '💸 Total damage: doesn\u2019t matter, worth it',
 ]
 
@@ -268,7 +271,7 @@ function TacoBellEasterEgg({ onClose }) {
   const [showFinal, setShowFinal] = useState(false)
 
   useEffect(() => {
-    playDramaticChord()
+    playTacoBellBong()
 
     // Emoji rain
     const container = rainRef.current

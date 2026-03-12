@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import './App.css'
 
 const PARTICLES = ['💕', '✨', '💗', '⭐', '💖', '🌸']
@@ -234,9 +234,126 @@ const loves = [
   },
 ]
 
+function playDramaticChord() {
+  const ctx = new (window.AudioContext || window.webkitAudioContext)()
+  const notes = [130.81, 164.81, 196.00, 261.63, 329.63]
+  notes.forEach((freq, i) => {
+    const osc = ctx.createOscillator()
+    const gain = ctx.createGain()
+    osc.type = i === 0 ? 'sawtooth' : 'triangle'
+    osc.frequency.value = freq
+    gain.gain.setValueAtTime(0, ctx.currentTime)
+    gain.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.05)
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 2.5)
+    osc.connect(gain)
+    gain.connect(ctx.destination)
+    osc.start(ctx.currentTime + i * 0.06)
+    osc.stop(ctx.currentTime + 2.5)
+  })
+}
+
+const TB_EMOJIS = ['🌮', '🌯', '🍟', '🥤', '🔔', '🌮', '🌯']
+const TB_ORDER = [
+  '🌮 Crunchwrap Supreme',
+  '🥤 Baja Blast (large, obviously)',
+  '🌯 Cheesy Gordita Crunch',
+  '🍟 Nacho Fries',
+  '🔥 Fire sauce. All of it.',
+  '💸 Total damage: doesn\u2019t matter, worth it',
+]
+
+function TacoBellEasterEgg({ onClose }) {
+  const rainRef = useRef(null)
+  const [visibleItems, setVisibleItems] = useState(0)
+  const [showFinal, setShowFinal] = useState(false)
+
+  useEffect(() => {
+    playDramaticChord()
+
+    // Emoji rain
+    const container = rainRef.current
+    const interval = setInterval(() => {
+      const el = document.createElement('span')
+      el.className = 'tb-rain'
+      el.textContent = TB_EMOJIS[Math.floor(Math.random() * TB_EMOJIS.length)]
+      el.style.left = Math.random() * 100 + 'vw'
+      el.style.fontSize = (Math.random() * 20 + 16) + 'px'
+      el.style.animationDuration = (Math.random() * 2 + 2) + 's'
+      container.appendChild(el)
+      setTimeout(() => el.remove(), 4000)
+    }, 120)
+
+    // Stagger order items
+    TB_ORDER.forEach((_, i) => {
+      setTimeout(() => setVisibleItems(i + 1), 800 + i * 500)
+    })
+
+    // Show final line after all items
+    setTimeout(() => setShowFinal(true), 800 + TB_ORDER.length * 500 + 400)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer"
+      onClick={onClose}
+    >
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-black/80 tb-fade-in" />
+      {/* Emoji rain container */}
+      <div ref={rainRef} className="absolute inset-0 pointer-events-none overflow-hidden" />
+      {/* Content */}
+      <div className="relative z-10 text-center px-6 max-w-2xl w-full pointer-events-none">
+        {/* Title */}
+        <h2 className="tb-drop-in text-3xl sm:text-5xl font-bold mb-10 sm:mb-14"
+          style={{ color: '#702082', textShadow: '0 0 40px rgba(112, 32, 130, 0.5)' }}>
+          HER OFFICIAL TACO BELL ORDER 🔔
+        </h2>
+        {/* Order items */}
+        <div className="space-y-4 sm:space-y-5 mb-10 sm:mb-14">
+          {TB_ORDER.map((item, i) => (
+            <div
+              key={i}
+              className={`text-xl sm:text-2xl font-bold tracking-wide ${i < visibleItems ? 'tb-slide-in' : 'opacity-0'}`}
+              style={{
+                color: '#FFC629',
+                textShadow: '0 2px 10px rgba(255, 198, 41, 0.3)',
+                animationDelay: '0s',
+              }}
+            >
+              {item}
+            </div>
+          ))}
+        </div>
+        {/* Final line */}
+        {showFinal && (
+          <p className="tb-pulse-in text-lg sm:text-2xl italic font-bold"
+            style={{ color: '#fff', textShadow: '0 0 30px rgba(255, 198, 41, 0.6)' }}>
+            this is not a want. this is a need. 👑
+          </p>
+        )}
+      </div>
+    </div>
+  )
+}
+
 function ThingsSheLoves() {
+  const [showTB, setShowTB] = useState(false)
+  const clickTimesRef = useRef([])
+
+  const handleTBClick = useCallback(() => {
+    const now = Date.now()
+    clickTimesRef.current = [...clickTimesRef.current.filter(t => now - t < 2000), now]
+    if (clickTimesRef.current.length >= 5) {
+      clickTimesRef.current = []
+      setShowTB(true)
+    }
+  }, [])
+
   return (
     <section id="loves" className="py-24 px-6 relative z-10">
+      {showTB && <TacoBellEasterEgg onClose={() => setShowTB(false)} />}
       <div className="max-w-5xl mx-auto text-center">
         <h2 className="font-script text-4xl sm:text-5xl text-pink-deep mb-4 reveal">
           things she loves
@@ -249,8 +366,10 @@ function ThingsSheLoves() {
             <div
               key={item.title}
               className={`reveal bg-gradient-to-br ${item.bg} ${item.border} border rounded-2xl p-6 text-center
-                hover:scale-[1.03] transition-all duration-300 card-glow cursor-default`}
+                hover:scale-[1.03] transition-all duration-300 card-glow cursor-default
+                ${item.title === 'Taco Bell' ? 'cursor-pointer select-none' : ''}`}
               style={{ transitionDelay: `${i * 80}ms` }}
+              onClick={item.title === 'Taco Bell' ? handleTBClick : undefined}
             >
               <span className="text-4xl block mb-3">{item.emoji}</span>
               <h3 className="font-display text-xl font-semibold text-gray-800 mb-2">

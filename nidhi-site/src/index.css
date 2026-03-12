@@ -112,6 +112,30 @@
     animation: heroGradient 12s ease infinite;
   }
 
+  /* Taco Bell Easter Egg */
+  .tb-fade-in {
+    animation: tbFadeIn 0.4s ease-out forwards;
+  }
+
+  .tb-drop-in {
+    animation: tbDropIn 0.6s cubic-bezier(0.17, 0.89, 0.32, 1.28) forwards;
+  }
+
+  .tb-slide-in {
+    animation: tbSlideIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  }
+
+  .tb-pulse-in {
+    animation: tbPulseIn 0.6s ease-out forwards, tbGlow 2s ease-in-out infinite 0.6s;
+  }
+
+  .tb-rain {
+    position: absolute;
+    top: -40px;
+    pointer-events: none;
+    animation: tbRainFall linear forwards;
+  }
+
   .hero-float-slow {
     animation: heroFloat 6s ease-in-out infinite;
   }
@@ -182,4 +206,37 @@
 @keyframes heroFloat {
   0%, 100% { transform: translateY(0) scale(1); }
   50% { transform: translateY(-20px) scale(1.05); }
+}
+
+@keyframes tbFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes tbDropIn {
+  0% { opacity: 0; transform: translateY(-120px) scale(1.3); }
+  60% { opacity: 1; transform: translateY(10px) scale(1); }
+  80% { transform: translateY(-5px) scale(1.02); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes tbSlideIn {
+  0% { opacity: 0; transform: translateX(-80px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes tbPulseIn {
+  0% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tbGlow {
+  0%, 100% { text-shadow: 0 0 30px rgba(255, 198, 41, 0.4); }
+  50% { text-shadow: 0 0 50px rgba(255, 198, 41, 0.8), 0 0 80px rgba(112, 32, 130, 0.3); }
+}
+
+@keyframes tbRainFall {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+  100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
 }

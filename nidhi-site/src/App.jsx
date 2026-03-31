@@ -531,6 +531,65 @@ function CurrentlyWatching() {
   )
 }
 
+const artists = [
+  {
+    name: 'The Weeknd',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a0/The_Weeknd_Portrait_by_Brian_Ziff.jpg/250px-The_Weeknd_Portrait_by_Brian_Ziff.jpg',
+  },
+  {
+    name: 'Drake',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg/250px-Drake_at_The_Carter_Effect_2017_%2836818935200%29_%28cropped%29.jpg',
+  },
+  {
+    name: 'Bryson Tiller',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b4/Bryson_Tiller_August_2018_%28cropped%29.jpg/250px-Bryson_Tiller_August_2018_%28cropped%29.jpg',
+  },
+  {
+    name: 'PARTYNEXTDOOR',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/3/36/PartyNextDoor_November_2016.jpg',
+  },
+  {
+    name: 'Jhené Aiko',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Jhen%C3%A9_Aiko_%2828652537575%29_%28cropped%29.jpg/250px-Jhen%C3%A9_Aiko_%2828652537575%29_%28cropped%29.jpg',
+  },
+]
+
+function FavoriteArtists() {
+  return (
+    <section className="py-24 px-6 relative z-10">
+      <div className="max-w-5xl mx-auto text-center">
+        <h2 className="font-script text-4xl sm:text-5xl text-pink-deep mb-4 reveal">
+          favorite artists 🎵
+        </h2>
+        <p className="text-pink-deep/50 mb-16 reveal font-body text-sm tracking-wide">
+          on repeat, always
+        </p>
+        <div className="flex flex-wrap justify-center gap-8 sm:gap-12">
+          {artists.map((artist, i) => (
+            <div
+              key={artist.name}
+              className="reveal group flex flex-col items-center"
+              style={{ transitionDelay: `${i * 80}ms` }}
+            >
+              <div className="w-32 h-32 sm:w-36 sm:h-36 rounded-full overflow-hidden border-2 border-pink-soft/40 group-hover:border-pink-medium/60 shadow-md group-hover:shadow-lg group-hover:shadow-pink-soft/30 transition-all duration-300">
+                <img
+                  src={artist.img}
+                  alt={artist.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+              </div>
+              <p className="mt-3 font-display text-sm font-semibold text-gray-700 group-hover:text-pink-deep transition-colors duration-300">
+                {artist.name}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 const matchaSpots = [
   'Marib Matcha',
   'Milkyway Matcha',
@@ -722,6 +781,7 @@ function App() {
       <JellycatPhotos />
       <MoviesSheLoves />
       <CurrentlyWatching />
+      <FavoriteArtists />
       <MatchaEra />
       <FavoriteRestaurants />
       <WhatMakesHerHer />
